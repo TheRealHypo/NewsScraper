@@ -1,0 +1,19 @@
+group 'htw.web'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.11'
+    compile 'net.sourceforge.htmlunit:htmlunit:2.24'
+    compile 'commons-codec:commons-codec:1.10'
+
+    runtime 'com.h2database:h2:1.4.195'
+}
