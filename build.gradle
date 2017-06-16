@@ -10,6 +10,8 @@ repositories {
     mavenCentral()
 }
 
+sourceSets.main.allSource.srcDirs += 'src/main/scraper'
+
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.11'
     compile 'net.sourceforge.htmlunit:htmlunit:2.24'
