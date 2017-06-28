@@ -11,6 +11,8 @@ class RegisterScraper {
      */
     static List<ScraperJob> scrapers = [
             new SpiegelScraper("SpiegelOnline"),
+            new WeltScraper("Die Welt"),
+            new BildScraper("Die Bild"),
     ]
 
     /**

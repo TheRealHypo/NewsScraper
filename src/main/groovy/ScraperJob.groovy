@@ -191,6 +191,8 @@ abstract class ScraperJob implements Runnable{
             if (stopped) {
                 stopped = false
                 this.run()
+                NewsScraperMain.runningScrapers.remove(this)
+                stopped = true
             } else {
                 logger.warn("$scraperName already running.")
             }

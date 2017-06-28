@@ -18,6 +18,8 @@ class DatabaseController {
 
     Connection conn = null
 
+    boolean locked = false
+
     /**
      * Creates the Database Controller
      * -> Create Table for Scrapers
@@ -38,6 +40,7 @@ class DatabaseController {
             log.error("Failed to initialize Database.")
         }finally{
             if (conn != null) conn.close()
+            locked = false
         }
     }
 
@@ -46,7 +49,11 @@ class DatabaseController {
      *
      */
     private def getConnection(){
+        while(locked){
+            sleep(500)
+        }
         conn = DriverManager.getConnection(CONNECTION_STRING)
+        locked = true
     }
 
     /**
@@ -71,7 +78,8 @@ class DatabaseController {
             e.printStackTrace()
             log.error("Failed to create Scraper ${scraper.scraperName} on database")
         }finally{
-            conn.close()
+            if(conn!= null) conn.close()
+            locked = false
         }
     }
 
@@ -97,6 +105,7 @@ class DatabaseController {
             return null
         }finally{
             if (conn != null) conn.close()
+            locked = false
         }
     }
 
@@ -120,10 +129,11 @@ class DatabaseController {
 
         }catch(SQLException e){
             e.printStackTrace()
-            log.error("Failed to get Result for $id")
+            log.error("Failed to get Result for $idHash")
             return false
         }finally{
             if (conn != null) conn.close()
+            locked = false
         }
     }
 
@@ -180,6 +190,7 @@ class DatabaseController {
             log.error("Failed to add '${text.size() > 60 ? text.substring(0,60) : text}' to database.")
         }finally{
             if (conn != null) conn.close()
+            locked = false
         }
     }
 
@@ -218,6 +229,7 @@ class DatabaseController {
             log.error("Failed to add '${webImageLink.size() > 60 ? webImageLink.substring(0,60) : webImageLink}' to database.")
         }finally{
             if (conn != null) conn.close()
+            locked = false
         }
     }
 

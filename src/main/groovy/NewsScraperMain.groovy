@@ -20,7 +20,7 @@ class NewsScraperMain extends Application{
     static DatabaseController db = new DatabaseController()
     static RegisterScraper register = new RegisterScraper()
 
-    List<ScraperJob> runningScrapers = []
+    static List<ScraperJob> runningScrapers = []
 
     static void main(String[] args){
         launch(this, args)
@@ -43,12 +43,13 @@ class NewsScraperMain extends Application{
         log.setPrefHeight(125)
         borderPane.setBottom(log)
 
-        VBox leftPanel = new VBox()
+        VBox leftPanel = new VBox(5)
         leftPanel.setAlignment(Pos.CENTER_LEFT)
         List<Button> buttons = []
         register.scrapers.each { scraper ->
             Button button = new Button(scraper.scraperName)
             button.setPrefWidth(120)
+
             button.setTooltip(new Tooltip(scraper.scraperName))
             button.setOnAction { e ->
                 //TODO Confirmation Dialog
@@ -66,8 +67,18 @@ class NewsScraperMain extends Application{
 
         VBox rightPanel = new VBox()
         rightPanel.setAlignment(Pos.CENTER_RIGHT)
-        Button pause = new Button("Pause")
-
+        //Button pause = new Button("Pause")
+        /*Button autoPlay = new Button("AutoMode")
+        autoPlay.setOnAction { e ->
+            register.scrapers.each { scraper ->
+                if(scraper.isStopped()){
+                    Thread.start {
+                        scraper.runScraper()
+                    }
+                }
+            }
+        }*/
+        //rightPanel.getChildren().add(autoPlay)
         BorderPane.setMargin(rightPanel, new Insets(4,4,4,4))
         borderPane.setRight(rightPanel)
 

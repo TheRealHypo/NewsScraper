@@ -1,38 +1,37 @@
 import com.gargoylesoftware.htmlunit.html.DomNode
 import com.gargoylesoftware.htmlunit.html.DomNodeList
-import com.gargoylesoftware.htmlunit.html.HtmlDivision
 import com.gargoylesoftware.htmlunit.html.HtmlPage
 import java.text.SimpleDateFormat
 
 /**
- * @author Dominik Elflein
+ * @author Georg Westerholt
  */
-class SpiegelScraper extends ScraperJob{
+class WeltScraper extends ScraperJob{
 
-    String BASE_URL = "http://www.spiegel.de"
+    String BASE_URL = "http://www.welt.de"
 
-    SpiegelScraper(String name) {
+    WeltScraper(String name) {
         super(name)
     }
 
     @Override
     void run() {
         logger.info("Started execution of ${this.scraperName}")
-        HtmlPage page = getPageResponse("http://www.spiegel.de/schlagzeilen/index-siebentage.html")
+        HtmlPage page = getPageResponse("https://www.welt.de/themen/alle-artikel-der-welt")
 
-        DomNodeList<DomNode> links = page.querySelectorAll(".schlagzeilen-content A")
+        DomNodeList<DomNode> links = page.querySelectorAll("span.headline A")
 
         List<String> articleLinks = []
 
-       links.each {
-           if(isStopped()) return
-           String link = it.getAttributes().getNamedItem("href").nodeValue
-           if(!link.startsWith("http")){
-               link = "$BASE_URL$link"
-           }
+        links.each {
+            if(isStopped()) return
+            String link = it.getAttributes().getNamedItem("href").nodeValue
+            if(!link.startsWith("http")){
+                link = "$BASE_URL$link"
+            }
 
-           articleLinks << link
-       }
+            articleLinks << link
+        }
 
         int size = articleLinks.size()
         int done = 0
@@ -44,7 +43,7 @@ class SpiegelScraper extends ScraperJob{
             if(article != null){
                 String textResult = ""
 
-                DomNodeList<DomNode> articleTexts = article.querySelectorAll(".article-section P")
+                DomNodeList<DomNode> articleTexts = article.querySelectorAll(".c-article-text P")
 
                 if(articleTexts.size() > 0){
                     articleTexts.each {
@@ -53,12 +52,15 @@ class SpiegelScraper extends ScraperJob{
 
                     //textResult.replaceAll("\n", "")
 
-                    DomNode time = article.querySelector(".timeformat")
+                    DomNode time = article.querySelector(".c-publish-date ")
                     if(time){
-                        String dateString = time.getAttributes().getNamedItem("datetime").nodeValue
+                        String dateString = time.getAttributes().getNamedItem("datetime")?.nodeValue
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd k:mm:ss")
-                        Date date = sdf.parse(dateString)
+                        Date date = null
+                        if(dateString!= null){
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                            date = sdf.parse(dateString)
+                        }
 
                         addText(textResult, date, it)
                     }else{
