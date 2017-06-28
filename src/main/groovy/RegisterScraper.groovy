@@ -13,6 +13,8 @@ class RegisterScraper {
             new SpiegelScraper("SpiegelOnline"),
             new WeltScraper("Die Welt"),
             new BildScraper("Die Bild"),
+            new FocusScraper("Focus"),
+            new SueddeutscheScraper("Süddeutsche"),
     ]
 
     /**

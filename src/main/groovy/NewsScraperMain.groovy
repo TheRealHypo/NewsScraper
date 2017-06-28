@@ -22,6 +22,8 @@ class NewsScraperMain extends Application{
 
     static List<ScraperJob> runningScrapers = []
 
+    synchronized boolean stop = true
+
     static void main(String[] args){
         launch(this, args)
     }
@@ -65,20 +67,63 @@ class NewsScraperMain extends Application{
         BorderPane.setMargin(leftPanel, new Insets(4,4,4,4))
         borderPane.setLeft(leftPanel)
 
-        VBox rightPanel = new VBox()
+        VBox rightPanel = new VBox(5)
         rightPanel.setAlignment(Pos.CENTER_RIGHT)
-        //Button pause = new Button("Pause")
-        /*Button autoPlay = new Button("AutoMode")
+        Button pause = new Button("Pause")
+        pause.setPrefWidth(120)
+        pause.setOnAction { e ->
+            stop = true
+        }
+        Button autoPlay = new Button("AutoMode")
         autoPlay.setOnAction { e ->
-            register.scrapers.each { scraper ->
-                if(scraper.isStopped()){
-                    Thread.start {
-                        scraper.runScraper()
-                    }
+            Thread.start {
+
+                List<ScraperJob> availableScraper = [
+                        new BildScraper("Bild"),
+                        //new FocusScraper("Focus"),
+                        new SpiegelScraper("Spiegel"),
+                        //new SueddeutscheScraper("Sueddeutsche"),
+                        new WeltScraper("Welt")
+                ]
+
+                logger.info("Preparing Autorun")
+                if(db == null){
+                    logger.info("No Database Connection...")
                 }
+                stop = false
+                while(!stop){
+                    availableScraper.each {
+                        if(!stop){
+                            logger.info("Launching $it.scraperName ...")
+                            it.runScraper()
+                        }else{
+                            logger.warn("Autorun stopped manually.")
+                        }
+                    }
+                    logger.info("Pausing program for 8 hours ...")
+                    long timeLimit = 8*3600*1000 // 8 Stunden
+                    long pastTime = 0L
+                    long warnTime = 30*60*1000 // 30 Minuten
+
+                    while(pastTime < timeLimit){
+                        if(!stop){
+                            sleep(warnTime)
+                            pastTime+= warnTime
+                            long leftTime = timeLimit - pastTime
+                            double timeHourLeft = (((leftTime/1000)/60)/60)
+                            logger.info("$timeHourLeft hours, until next autoRun.")
+                        }else{
+                            logger.warn("Autorun stopped manually.")
+                        }
+                    }
+                    logger.info("Starting next autoRun.")
+                }
+                logger.warn("Autorun stopped manually.")
             }
-        }*/
-        //rightPanel.getChildren().add(autoPlay)
+        }
+        autoPlay.setPrefWidth(120)
+        rightPanel.getChildren().add(autoPlay)
+        rightPanel.getChildren().add(pause)
         BorderPane.setMargin(rightPanel, new Insets(4,4,4,4))
         borderPane.setRight(rightPanel)
 
