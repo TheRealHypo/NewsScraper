@@ -41,7 +41,7 @@ class SpiegelScraper extends ScraperJob{
             if(isStopped()) return
             HtmlPage article = getPageResponse(it)
 
-            String category = it.split("/")[1]
+            String category = it.split("/")[3]
 
             if(article != null){
                 String textResult = ""
