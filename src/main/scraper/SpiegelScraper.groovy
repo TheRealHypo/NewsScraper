@@ -41,6 +41,8 @@ class SpiegelScraper extends ScraperJob{
             if(isStopped()) return
             HtmlPage article = getPageResponse(it)
 
+            String category = it.split("/")[1]
+
             if(article != null){
                 String textResult = ""
 
@@ -60,10 +62,10 @@ class SpiegelScraper extends ScraperJob{
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd k:mm:ss")
                         Date date = sdf.parse(dateString)
 
-                        addText(textResult, date, it)
+                        addText(textResult, date, it, category)
                     }else{
                         logger.warn("Couldn't find date on $it")
-                        addText(textResult, null, it)
+                        addText(textResult, null, it, category)
                     }
                 }else{
                     logger.warn("Couldn't find article Texts on $it")

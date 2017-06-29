@@ -116,8 +116,8 @@ abstract class ScraperJob implements Runnable{
      * If more than 50 results are cached, this will call saveResults().
      *
      */
-    private def addResult(String key, String obj, Date date, String source){
-        results << new Result(key, obj, date, source)
+    private def addResult(String key, String obj, Date date, String source, String category = null){
+        results << new Result(key, obj, date, source, category)
         //logger.debug("Added new Object(${obj.length() > 60 ? obj.substring(0, 60).replaceAll("\n", "") : obj.replaceAll("\n", "")}) to Resultlist of $scraperName")
         if(results.size() > 50){
             saveResults()
@@ -132,8 +132,8 @@ abstract class ScraperJob implements Runnable{
      * @param date -> Date of Source
      * @param source -> SourceURL
      */
-    def addText(String text, Date date, String source){
-        addResult("TEXT", text, date, source)
+    def addText(String text, Date date, String source, String category = null){
+        addResult("TEXT", text, date, source, category)
     }
 
     /**
@@ -143,8 +143,8 @@ abstract class ScraperJob implements Runnable{
      * @param date -> Date of Source
      * @param source -> SourceURL
      */
-    def addWebImage(String webImageLink, Date date, String source){
-        addResult("WEBIMAGE", webImageLink, date, source)
+    def addWebImage(String webImageLink, Date date, String source, String category = null){
+        addResult("WEBIMAGE", webImageLink, date, source, category)
     }
 
     /**
@@ -160,16 +160,17 @@ abstract class ScraperJob implements Runnable{
            String obj = entry.obj
            Date date = entry.date
            String source = entry.source
+            String category = entry.category
            switch (type){
                case "TEXT":
-                   db.addTextResult(id, obj as String, date, source)
+                   db.addTextResult(id, obj as String, date, source, category)
                    break
                case "WEBIMAGE":
-                   db.addWebImageResult(id, obj as String, date, source)
+                   db.addWebImageResult(id, obj as String, date, source, category)
                    break
                default:
                    logger.warn("Trying to add $obj as Text to database. Type unknown.")
-                   db.addTextResult(id, obj as String, date, source)
+                   db.addTextResult(id, obj as String, date, source, category)
                    break
            }
        }
@@ -229,14 +230,15 @@ abstract class ScraperJob implements Runnable{
         Date date = null
         String obj
         String source
-
+        String category
         String type
 
-        Result(String type, String obj, Date date, String source){
+        Result(String type, String obj, Date date, String source, String category = null){
             this.type = type
             this.obj = obj
             this.date = date
             this.source = source
+            this.category = category
         }
     }
 }

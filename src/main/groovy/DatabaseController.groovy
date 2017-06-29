@@ -33,7 +33,7 @@ class DatabaseController {
         Statement stm = conn.createStatement()
 
         stm.executeUpdate("CREATE TABLE IF NOT EXISTS scraper(ID VARCHAR(32) PRIMARY KEY NOT NULL, name VARCHAR(255))")
-        stm.executeUpdate("CREATE TABLE IF NOT EXISTS scraper_results(ID VARCHAR(32) PRIMARY KEY NOT NULL, scraper_id VARCHAR(255) NOT NULL , type VARCHAR(64), result LONGTEXT, date DATE, source VARCHAR(255))")
+        stm.executeUpdate("CREATE TABLE IF NOT EXISTS scraper_results(ID VARCHAR(32) PRIMARY KEY NOT NULL, scraper_id VARCHAR(255) NOT NULL , type VARCHAR(64), result LONGTEXT, date DATE, source VARCHAR(255), category VARCHAR(64))")
 
         }catch (SQLException e){
             e.printStackTrace()
@@ -151,7 +151,7 @@ class DatabaseController {
      * @param date -> Date of Source
      * @param source -> weblink to source
      */
-    def addTextResult(String id, String text, Date date, String source){
+    def addTextResult(String id, String text, Date date, String source, String category = null){
         try{
             String keyChain = text.size() > 60 ? text.substring(0,60) : text
 
@@ -175,9 +175,9 @@ class DatabaseController {
                 if(date!=null){
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
                     String dateString = sdf.format(date)
-                    stm.executeUpdate("INSERT INTO scraper_results VALUES('$idHash', '$id', 'TEXT', '$text', '$dateString', '$source')")
+                    stm.executeUpdate("INSERT INTO scraper_results VALUES('$idHash', '$id', 'TEXT', '$text', '$dateString', '$source', '$category')")
                 }else{
-                    stm.executeUpdate("INSERT INTO scraper_results VALUES('$idHash', '$id', 'TEXT', '$text', NULL, '$source')")
+                    stm.executeUpdate("INSERT INTO scraper_results VALUES('$idHash', '$id', 'TEXT', '$text', NULL, '$source', '$category')")
                 }
 
 
@@ -204,7 +204,7 @@ class DatabaseController {
      * @param date -> Date of sourcefile
      * @param source -> Link to source
      */
-    def addWebImageResult(String id, String webImageLink, Date date, String source){
+    def addWebImageResult(String id, String webImageLink, Date date, String source, String category = null){
         try{
             String keyChain = webImageLink.size() > 60 ? webImageLink.substring(0,60) : webImageLink
             String idHash = DigestUtils.md5Hex(keyChain)
@@ -216,9 +216,9 @@ class DatabaseController {
                 if(date!=null){
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
                     String dateString = sdf.format(date)
-                    stm.executeUpdate("INSERT INTO scraper_results VALUES('$idHash', '$id', 'WEBIMAGE', '$webImageLink', '$dateString', '$source')")
+                    stm.executeUpdate("INSERT INTO scraper_results VALUES('$idHash', '$id', 'WEBIMAGE', '$webImageLink', '$dateString', '$source', '$category')")
                 }else{
-                    stm.executeUpdate("INSERT INTO scraper_results VALUES('$idHash', '$id', 'WEBIMAGE', '$webImageLink', NULL, '$source')")
+                    stm.executeUpdate("INSERT INTO scraper_results VALUES('$idHash', '$id', 'WEBIMAGE', '$webImageLink', NULL, '$source', '$category')")
                 }
                 log.debug("Added '${webImageLink.size() > 60 ? webImageLink.substring(0,60) : webImageLink}' with ID:$id to database.")
             }else{

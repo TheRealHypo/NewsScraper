@@ -80,9 +80,9 @@ class NewsScraperMain extends Application{
 
                 List<ScraperJob> availableScraper = [
                         new BildScraper("Bild"),
-                        //new FocusScraper("Focus"),
+                        new FocusScraper("Focus"),
                         new SpiegelScraper("Spiegel"),
-                        //new SueddeutscheScraper("Sueddeutsche"),
+                        new SueddeutscheScraper("Sueddeutsche"),
                         new WeltScraper("Welt")
                 ]
 
