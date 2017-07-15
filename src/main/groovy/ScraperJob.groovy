@@ -116,7 +116,7 @@ abstract class ScraperJob implements Runnable{
      * If more than 50 results are cached, this will call saveResults().
      *
      */
-    private def addResult(String key, String obj, Date date, String source, String category = null){
+    private def addResult(String key, String obj, Date date, String source, String category = "null"){
         results << new Result(key, obj, date, source, category)
         //logger.debug("Added new Object(${obj.length() > 60 ? obj.substring(0, 60).replaceAll("\n", "") : obj.replaceAll("\n", "")}) to Resultlist of $scraperName")
         if(results.size() > 50){
@@ -132,7 +132,7 @@ abstract class ScraperJob implements Runnable{
      * @param date -> Date of Source
      * @param source -> SourceURL
      */
-    def addText(String text, Date date, String source, String category = null){
+    def addText(String text, Date date, String source, String category = "null"){
         addResult("TEXT", text, date, source, category)
     }
 
@@ -143,7 +143,7 @@ abstract class ScraperJob implements Runnable{
      * @param date -> Date of Source
      * @param source -> SourceURL
      */
-    def addWebImage(String webImageLink, Date date, String source, String category = null){
+    def addWebImage(String webImageLink, Date date, String source, String category = "null"){
         addResult("WEBIMAGE", webImageLink, date, source, category)
     }
 
@@ -233,7 +233,7 @@ abstract class ScraperJob implements Runnable{
         String category
         String type
 
-        Result(String type, String obj, Date date, String source, String category = null){
+        Result(String type, String obj, Date date, String source, String category = "null"){
             this.type = type
             this.obj = obj
             this.date = date

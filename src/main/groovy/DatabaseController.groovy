@@ -33,7 +33,7 @@ class DatabaseController {
         Statement stm = conn.createStatement()
 
         stm.executeUpdate("CREATE TABLE IF NOT EXISTS scraper(ID VARCHAR(32) PRIMARY KEY NOT NULL, name VARCHAR(255))")
-        stm.executeUpdate("CREATE TABLE IF NOT EXISTS scraper_results(ID VARCHAR(32) PRIMARY KEY NOT NULL, scraper_id VARCHAR(255) NOT NULL , type VARCHAR(64), result LONGTEXT, date DATE, source VARCHAR(255), category VARCHAR(64))")
+        stm.executeUpdate("CREATE TABLE IF NOT EXISTS scraper_results(ID VARCHAR(32) PRIMARY KEY NOT NULL, scraper_id VARCHAR(255) NOT NULL , type VARCHAR(64), result LONGTEXT, date TIMESTAMP, source VARCHAR(255), category VARCHAR(64))")
 
         }catch (SQLException e){
             e.printStackTrace()
@@ -173,7 +173,7 @@ class DatabaseController {
                 Statement stm = conn.createStatement()
 
                 if(date!=null){
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
                     String dateString = sdf.format(date)
                     stm.executeUpdate("INSERT INTO scraper_results VALUES('$idHash', '$id', 'TEXT', '$text', '$dateString', '$source', '$category')")
                 }else{
@@ -214,7 +214,7 @@ class DatabaseController {
                 Statement stm = conn.createStatement()
 
                 if(date!=null){
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
                     String dateString = sdf.format(date)
                     stm.executeUpdate("INSERT INTO scraper_results VALUES('$idHash', '$id', 'WEBIMAGE', '$webImageLink', '$dateString', '$source', '$category')")
                 }else{
@@ -232,5 +232,52 @@ class DatabaseController {
             locked = false
         }
     }
+
+    def getSearchResult(String search){
+        try{
+            getConnection()
+
+            List<ScraperResult> results = []
+
+            Statement stm = conn.createStatement()
+            ResultSet rs = stm.executeQuery("SELECT * FROM SCRAPERDATA.PUBLIC.SCRAPER_RESULTS WHERE RESULT LIKE '%$search%'")
+            while(rs.next()){
+                results << new ScraperResult(rs.getString("ID"), rs.getString("SCRAPER_ID"), rs.getString("TYPE"),
+                        rs.getString("RESULT"), rs.getDate("DATE"), rs.getString("SOURCE"), rs.getString("CATEGORY"))
+            }
+            return results
+        }catch(SQLException e){
+            e.printStackTrace()
+            log.error("Failed to get Results for Searchstring $search")
+            return null
+        }finally{
+            if (conn != null) conn.close()
+            locked = false
+        }
+    }
+
+    def getSearchResult(String search, String scraperID){
+        try{
+            getConnection()
+
+            List<ScraperResult> results = []
+
+            Statement stm = conn.createStatement()
+            ResultSet rs = stm.executeQuery("SELECT * FROM SCRAPERDATA.PUBLIC.SCRAPER_RESULTS WHERE RESULT LIKE '%$search%' AND SCRAPER_ID = '$scraperID'")
+            while(rs.next()){
+                results << new ScraperResult(rs.getString("ID"), rs.getString("SCRAPER_ID"), rs.getString("TYPE"),
+                        rs.getString("RESULT"), rs.getDate("DATE"), rs.getString("SOURCE"), rs.getString("CATEGORY"))
+            }
+            return results
+        }catch(SQLException e){
+            e.printStackTrace()
+            log.error("Failed to get Results for Searchstring $search and scraperId $scraperID")
+            return null
+        }finally{
+            if (conn != null) conn.close()
+            locked = false
+        }
+    }
+
 
 }
