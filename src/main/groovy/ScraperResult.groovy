@@ -1,4 +1,4 @@
-import java.sql.Date
+import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
 /**
@@ -14,7 +14,7 @@ class ScraperResult {
     String source
     String category
 
-    ScraperResult(String id, String scraper_id, String type, String result, Date date, String source, String category) {
+    ScraperResult(String id, String scraper_id, String type, String result, Timestamp date, String source, String category) {
         this.id = id
         this.scraper_id = scraper_id
         this.type = type
@@ -31,6 +31,5 @@ class ScraperResult {
         }else{
             return null
         }
-
     }
 }

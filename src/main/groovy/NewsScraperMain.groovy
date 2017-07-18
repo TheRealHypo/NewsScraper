@@ -177,18 +177,21 @@ class NewsScraperMain extends Application{
 
     private static final String CSV_SEPARATOR = ";"
     static exportCSVFile(String search) {
+        logger.info("Starting export for Search: $search")
         try{
             File file = new File("./export")
             if(!file.exists()){
                 file.mkdir()
             }
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("./export/$search-Results.csv"), "UTF-8"))
+            String path = "./export/$search-Results.csv"
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("$path"), "UTF-8"))
             currentSearch.each {
                 String row = "$it.id$CSV_SEPARATOR$it.scraper_id$CSV_SEPARATOR$it.type$CSV_SEPARATOR${it.result.replaceAll("\n", " ")}$CSV_SEPARATOR${it.getDateAsString() != null ? it.getDateAsString() : 'null'}$CSV_SEPARATOR$it.source$CSV_SEPARATOR$it.category\n"
                 bw.write(row)
             }
             bw.flush()
             bw.close()
+            logger.info("Finished export for Search: $search - Saved to: $path")
         }
         catch (UnsupportedEncodingException e) {
             logger.warn("Error while exporting csv. (UnsupportedEncodingException)")
@@ -202,6 +205,7 @@ class NewsScraperMain extends Application{
             logger.warn("Error while exporting csv. (IOException)")
             e.printStackTrace()
         }
+
     }
 
     static searchDatabase(String search){

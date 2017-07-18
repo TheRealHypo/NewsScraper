@@ -243,7 +243,7 @@ class DatabaseController {
             ResultSet rs = stm.executeQuery("SELECT * FROM SCRAPERDATA.PUBLIC.SCRAPER_RESULTS WHERE RESULT LIKE '%$search%'")
             while(rs.next()){
                 results << new ScraperResult(rs.getString("ID"), rs.getString("SCRAPER_ID"), rs.getString("TYPE"),
-                        rs.getString("RESULT"), rs.getDate("DATE"), rs.getString("SOURCE"), rs.getString("CATEGORY"))
+                        rs.getString("RESULT"), rs.getTimestamp("DATE"), rs.getString("SOURCE"), rs.getString("CATEGORY"))
             }
             return results
         }catch(SQLException e){
@@ -266,7 +266,7 @@ class DatabaseController {
             ResultSet rs = stm.executeQuery("SELECT * FROM SCRAPERDATA.PUBLIC.SCRAPER_RESULTS WHERE RESULT LIKE '%$search%' AND SCRAPER_ID = '$scraperID'")
             while(rs.next()){
                 results << new ScraperResult(rs.getString("ID"), rs.getString("SCRAPER_ID"), rs.getString("TYPE"),
-                        rs.getString("RESULT"), rs.getDate("DATE"), rs.getString("SOURCE"), rs.getString("CATEGORY"))
+                        rs.getString("RESULT"), rs.getTimestamp("DATE"), rs.getString("SOURCE"), rs.getString("CATEGORY"))
             }
             return results
         }catch(SQLException e){
